@@ -13,6 +13,8 @@ public class YearlyReport {
         this.year = year;
     }
 
+    public YearlyReport() {}
+
     private int findAverageExpense() {
         int expense = 0;
         for (MonthStats monthStats : this.monthStats) {
@@ -30,6 +32,11 @@ public class YearlyReport {
     }
 
     public void printYearlyReport() {
+        if (monthStats.isEmpty()) {
+            System.out.println("Error: yearly report wasn't read");
+            return;
+        }
+
         System.out.println("YEAR: " + year);
         System.out.println("Average income: " + findAverageIncome());
         System.out.println("Average expense: " + findAverageExpense());
@@ -41,8 +48,20 @@ public class YearlyReport {
     }
 
     public void checkMonthlyReports(List<MonthlyReport> monthlyReports) {
-        for (MonthlyReport monthlyReport : monthlyReports) {
+        if (monthlyReports.isEmpty() || monthStats.isEmpty()) {
+            System.out.println("Error: reports wasn't read");
+            return;
+        }
 
+        for (MonthlyReport monthlyReport : monthlyReports) {
+                for (MonthStats monthStats : this.monthStats) {
+                    if (monthlyReport.getMonth().equals(monthStats.getMonth())) {
+                        if (!monthlyReport.checkReport().equals(monthStats)) {
+                            System.out.println("Month " + monthlyReport.getMonth()
+                                    + ": found variance in data of monthly and yearly reports");
+                        }
+                    }
+                }
         }
     }
 }

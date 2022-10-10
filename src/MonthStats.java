@@ -35,4 +35,8 @@ public class MonthStats {
     public int getIncome() {
         return income;
     }
+
+    public boolean equals(MonthStats monthStats) {
+        return (this.expense == monthStats.expense) && (this.income == monthStats.income);
+    }
 }

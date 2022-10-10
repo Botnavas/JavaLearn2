@@ -1,6 +1,3 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +24,6 @@ public class MonthlyReport {
                 monthIncome += expense.getPrice() * expense.getQuantity();
             }
         }
-
         return new MonthStats(month, monthExpense, monthIncome);
     }
 
@@ -57,11 +53,15 @@ public class MonthlyReport {
                 }
             }
         }
-
         return biggestIncome;
     }
 
     public void printReport() {
+        if (expenses.isEmpty()) {
+            System.out.println("Error: monthly reports wasn't read");
+            return;
+        }
+
         Expense biggestExpense = findBiggestExpense();
         Expense biggestIncome = findBiggestIncome();
 
@@ -78,5 +78,9 @@ public class MonthlyReport {
             System.out.print(expense.getQuantity() + "\t");
             System.out.print(expense.getPrice() + "\n");
         }
+    }
+
+    public  String getMonth() {
+        return  month;
     }
 }
