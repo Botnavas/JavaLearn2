@@ -2,8 +2,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class FileWork {
-    private String readFileContentsOrNull(String path)
+public class FileParser {
+    private static String readFile(String path)
     {
         try {
             return Files.readString(Path.of(path));
@@ -13,15 +13,15 @@ public class FileWork {
         }
     }
 
-    public String[] getLine(String path) {
-        return readFileContentsOrNull(path).split(System.lineSeparator());
+    public static String[] getLinesFromFile(String path) {
+        return readFile(path).split("\n");
     }
 
-    public String getMonthFromFileName(String name) {
-        return name.substring(name.length() - 6, name.length() - 4);
+    public static String getMonthName(String path) {
+        return path.substring(path.length() - 6, path.length() - 4);
     }
 
-    public String getYearFromFileName(String name) {
-        return name.substring(name.length() - 8, name.length() - 4);
+    public static String getYearName(String path) {
+        return path.substring(path.length() - 8, path.length() - 4);
     }
 }

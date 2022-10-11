@@ -2,39 +2,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MonthlyReport {
-    private List<Expense> expenses = new ArrayList<>();
+    private List<MonthItem> monthItems;
     private String month;
 
     public MonthlyReport(String[] lines, String month) {
-        for (int i = 1; i < lines.length; i ++) {
-            Expense expense = new Expense(lines[i]);
-            expenses.add(expense);
-        }
         this.month = month;
+
+        monthItems = new ArrayList<>();
+        for (int i = 1; i < lines.length; i ++) {
+            MonthItem monthItem = new MonthItem(lines[i]);
+            monthItems.add(monthItem);
+        }
     }
 
-    public MonthStats checkReport() {
+    public MonthStatistic checkReport() {
         int monthExpense = 0;
         int monthIncome = 0;
 
-        for (Expense expense : expenses) {
-            if (expense.getIsExpense()) {
-                monthExpense -= expense.getPrice() * expense.getQuantity();
+        for (MonthItem monthItem : monthItems) {
+            if (monthItem.getIsExpense()) {
+                monthExpense += monthItem.getPrice() * monthItem.getQuantity();
             } else {
-                monthIncome += expense.getPrice() * expense.getQuantity();
+                monthIncome += monthItem.getPrice() * monthItem.getQuantity();
             }
         }
-        return new MonthStats(month, monthExpense, monthIncome);
+        return new MonthStatistic(month, monthExpense, monthIncome);
     }
 
-    private Expense findBiggestExpense() {
-        Expense biggestExpense = new Expense("", true, 0, 0);
+    private MonthItem findBiggestExpense() {
+        MonthItem biggestExpense = new MonthItem("", true, 0, 0);
 
-        for (Expense expense : expenses) {
-            if (expense.getIsExpense()) {
-                if ((expense.getPrice() * expense.getQuantity()) >
+        for (MonthItem monthItem : monthItems) {
+            if (monthItem.getIsExpense()) {
+                if ((monthItem.getPrice() * monthItem.getQuantity()) >
                         (biggestExpense.getPrice() * biggestExpense.getQuantity())) {
-                    biggestExpense = expense;
+                    biggestExpense = monthItem;
                 }
             }
         }
@@ -42,14 +44,14 @@ public class MonthlyReport {
         return biggestExpense;
     }
 
-    private Expense findBiggestIncome() {
-        Expense biggestIncome = new Expense("", false, 0, 0);
+    private MonthItem findBiggestIncome() {
+        MonthItem biggestIncome = new MonthItem("", false, 0, 0);
 
-        for (Expense expense : expenses) {
-            if (!expense.getIsExpense()) {
-                if ((expense.getPrice() * expense.getQuantity()) >
+        for (MonthItem monthItem : monthItems) {
+            if (!monthItem.getIsExpense()) {
+                if ((monthItem.getPrice() * monthItem.getQuantity()) >
                         (biggestIncome.getPrice() * biggestIncome.getQuantity())) {
-                    biggestIncome = expense;
+                    biggestIncome = monthItem;
                 }
             }
         }
@@ -57,13 +59,8 @@ public class MonthlyReport {
     }
 
     public void printReport() {
-        if (expenses.isEmpty()) {
-            System.out.println("Error: monthly reports wasn't read");
-            return;
-        }
-
-        Expense biggestExpense = findBiggestExpense();
-        Expense biggestIncome = findBiggestIncome();
+        MonthItem biggestExpense = findBiggestExpense();
+        MonthItem biggestIncome = findBiggestIncome();
 
         System.out.println("MONTH: " + month);
         System.out.println("Biggest expense: " + biggestExpense.getItemName()
@@ -71,13 +68,14 @@ public class MonthlyReport {
         System.out.println("Biggest income: " + biggestIncome.getItemName()
                 + ", Sum: " + biggestIncome.getQuantity() * biggestIncome.getPrice());
 
-        System.out.println("ITEM NAME\t\tIS EXPENSE\tQUANTITY\tSUM OF ONE\n");
-        for (Expense expense : expenses) {
-            System.out.print(expense.getItemName() + "\t");
-            System.out.print(expense.getIsExpense() + "\t");
-            System.out.print(expense.getQuantity() + "\t");
-            System.out.print(expense.getPrice() + "\n");
+        System.out.println("ITEM NAME\t\tIS EXPENSE\tQUANTITY\tSUM OF ONE");
+        for (MonthItem monthItem : monthItems) {
+            System.out.print(monthItem.getItemName() + "\t");
+            System.out.print(monthItem.getIsExpense() + "\t");
+            System.out.print(monthItem.getQuantity() + "\t");
+            System.out.print(monthItem.getPrice() + "\n");
         }
+        System.out.println();
     }
 
     public  String getMonth() {
