@@ -1,16 +1,16 @@
-public class MonthStatistic {
+public class YearItem {
     private String month;
     private int expense;
     private int income;
 
 
-    public MonthStatistic(String month, int expense, int income) {
+    public YearItem(String month, int expense, int income) {
         this.month = month;
         this.income = income;
         this.expense = expense;
     }
 
-    public MonthStatistic(String month) {
+    public YearItem(String month) {
         this.month = month;
         expense = 0;
         income = 0;
@@ -28,15 +28,15 @@ public class MonthStatistic {
         return income;
     }
 
-    public void setExpense(int expense) {
-        this.expense = expense;
+    public void addExpense(int expense) {
+        this.expense += expense;
     }
 
-    public void setIncome(int income) {
-        this.income = income;
+    public void addIncome(int income) {
+        this.income += income;
     }
 
-    public boolean equals(MonthStatistic monthStatistic) {
-        return (this.expense == monthStatistic.getExpense()) && (this.income == monthStatistic.getIncome());
+    public boolean equals(YearItem yearItem) {
+        return (this.expense == yearItem.getExpense()) && (this.income == yearItem.getIncome());
     }
 }

@@ -2,20 +2,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MonthlyReport {
-    private List<MonthItem> monthItems;
+    private List<MonthItem> monthItems = null;
     private String month;
 
-    public MonthlyReport(String[] lines, String month) {
+    public MonthlyReport(String[] monthItemsInLines, String month) {
         this.month = month;
+        if (monthItemsInLines == null)
+        {
+            monthItems = null;
+            System.out.println("Report for month " + month + " wasn't found");
+            return;
+        }
 
         monthItems = new ArrayList<>();
-        for (int i = 1; i < lines.length; i ++) {
-            MonthItem monthItem = new MonthItem(lines[i]);
+        for (int i = 1; i < monthItemsInLines.length; i ++) {
+            MonthItem monthItem = new MonthItem(monthItemsInLines[i]);
             monthItems.add(monthItem);
         }
+        System.out.println("Read report for month " + month);
     }
 
-    public MonthStatistic checkReport() {
+    public YearItem calculateYearItem() {
+        if (monthItems == null) {
+            return new YearItem(month);
+        }
+
         int monthExpense = 0;
         int monthIncome = 0;
 
@@ -26,7 +37,7 @@ public class MonthlyReport {
                 monthIncome += monthItem.getPrice() * monthItem.getQuantity();
             }
         }
-        return new MonthStatistic(month, monthExpense, monthIncome);
+        return new YearItem(month, monthExpense, monthIncome);
     }
 
     private MonthItem findBiggestExpense() {
@@ -59,6 +70,11 @@ public class MonthlyReport {
     }
 
     public void printReport() {
+        if (monthItems == null) {
+            System.out.println("There isn't report for month " + month + " or it wasn't read");
+            return;
+        }
+
         MonthItem biggestExpense = findBiggestExpense();
         MonthItem biggestIncome = findBiggestIncome();
 

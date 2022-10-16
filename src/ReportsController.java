@@ -33,12 +33,18 @@ public class ReportsController {
         yearlyReport.checkMonthlyReports(monthlyReports);
     }
 
-    public void readMonthlyReports(String firstPartOfPath, int reportsQuantity, String lastPartOfPath) {
-        for (int i = 1; i <= reportsQuantity; i++) {
-            String path = firstPartOfPath + i + lastPartOfPath;
-            monthlyReports.put(FileParser.getMonthName(path),
-                    new MonthlyReport(FileParser.getLinesFromFile(path), FileParser.getMonthName(path)));
-            System.out.println("Read report for month " + FileParser.getMonthName(path));
+    public void readMonthlyReports(String firstPartOfPath, String lastPartOfPath) {
+        for (int i = 1; i <= 12; i++) {
+
+            String monthName;
+            if ( i < 10) {
+                monthName = "0" + i;
+            } else {
+                monthName = Integer.toString(i);
+            }
+            String path = firstPartOfPath + monthName + lastPartOfPath;
+            monthlyReports.put(monthName,
+                    new MonthlyReport(FileParser.getLinesFromFile(path), monthName));
         }
     }
 

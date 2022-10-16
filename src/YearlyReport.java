@@ -1,24 +1,33 @@
 import java.util.HashMap;
 
 public class YearlyReport {
-    private HashMap<String, MonthStatistic> monthStatisticHashMap = new HashMap<>();
+    private HashMap<String, YearItem> yearItems = new HashMap<>();
     private String year;
 
-    public YearlyReport(String[] monthExpense, String year) {
+    public YearlyReport(String[] yearItem, String year) {
         this.year = year;
 
-        for (int i = 1; i < monthExpense.length; i++) {
-            String[] monthExpenseData = monthExpense[i].split(",");
-            if (!monthStatisticHashMap.containsKey(monthExpenseData[0])) {
-                monthStatisticHashMap.put(monthExpenseData[0],
-                        new MonthStatistic(monthExpenseData[0]));
+        //Creating YearItem for all months
+        for (int i = 1; i <= 12; i++) {
+            String monthName;
+            if (i < 10) {
+                monthName = "0" + Integer.toString(i);
+            } else  {
+                monthName = Integer.toString(i);
             }
-            if (Boolean.parseBoolean(monthExpenseData[2])) {
-                monthStatisticHashMap.get(monthExpenseData[0]).setExpense(
-                        Integer.parseInt(monthExpenseData[1]));
+            yearItems.put(monthName, new YearItem(monthName));
+        }
+
+        //Filling yearItems
+        for (int i = 1; i < yearItem.length; i++) {
+            String[] yearItemData = yearItem[i].split(",");
+
+            if (Boolean.parseBoolean(yearItemData[2])) {
+                yearItems.get(yearItemData[0]).addExpense(
+                        Integer.parseInt(yearItemData[1]));
             } else {
-                monthStatisticHashMap.get(monthExpenseData[0]).setIncome(
-                        Integer.parseInt(monthExpenseData[1]));
+                yearItems.get(yearItemData[0]).addIncome(
+                        Integer.parseInt(yearItemData[1]));
             }
         }
     }
@@ -26,22 +35,22 @@ public class YearlyReport {
     private int findAverageExpense() {
         int expense = 0;
 
-        for (MonthStatistic monthStatistic : monthStatisticHashMap.values()) {
-            expense += monthStatistic.getExpense();
+        for (YearItem yearItem : yearItems.values()) {
+            expense += yearItem.getExpense();
         }
-        return expense/ monthStatisticHashMap.size();
+        return expense/ yearItems.size();
     }
 
     private int findAverageIncome() {
         int income = 0;
-        for (MonthStatistic monthStatistic : monthStatisticHashMap.values()) {
-            income += monthStatistic.getIncome();
+        for (YearItem yearItem : yearItems.values()) {
+            income += yearItem.getIncome();
         }
-        return income/ monthStatisticHashMap.size();
+        return income/ yearItems.size();
     }
 
     public void printYearlyReport() {
-        if (monthStatisticHashMap.isEmpty()) {
+        if (yearItems.isEmpty()) {
             System.out.println("Error: yearly report wasn't read");
             return;
         }
@@ -49,29 +58,41 @@ public class YearlyReport {
         System.out.println("YEAR: " + year);
         System.out.println("Average income: " + findAverageIncome());
         System.out.println("Average expense: " + findAverageExpense());
-        for (MonthStatistic monthsStats : monthStatisticHashMap.values()) {
-            System.out.println("MONTH\tINCOME");
-            System.out.print(monthsStats.getMonth() + "\t");
-            System.out.print(Integer.toString(monthsStats.getIncome() - monthsStats.getExpense()) + "\n");
+        for (YearItem yearItem : yearItems.values()) {
+            if ((yearItem.getExpense() == 0) && (yearItem.getIncome() == 0)) {
+                System.out.println("For month " + yearItem.getMonth()
+                     + " income and expense are zero. Information for this month may be missing");
+            } else {
+                System.out.println("MONTH\tINCOME");
+                System.out.print(yearItem.getMonth() + "\t");
+                System.out.print(Integer.toString(yearItem.getIncome() - yearItem.getExpense()) + "\n");
+            }
+            System.out.println();
         }
-        System.out.println();
     }
 
     public void checkMonthlyReports(HashMap<String, MonthlyReport> monthlyReports) {
-        if (monthlyReports.isEmpty() || monthStatisticHashMap.isEmpty()) {
+        if (monthlyReports.isEmpty() || yearItems.isEmpty()) {
             System.out.println("Error: reports wasn't read");
             return;
         }
 
         for (MonthlyReport monthlyReport : monthlyReports.values()) {
-            if (!monthlyReport.checkReport().equals(
-                    monthStatisticHashMap.get(monthlyReport.getMonth()))) {
+            if (!monthlyReport.calculateYearItem().equals(
+                    yearItems.get(monthlyReport.getMonth()))) {
                 System.out.println("Found variance in monthly report for month "
                      + monthlyReport.getMonth() + " and yearly report");
             } else {
                 System.out.println("Data in monthly report for month "
                         + monthlyReport.getMonth() + " and yearly report are the same");
+                if ((yearItems.get(monthlyReport.getMonth()).getExpense() == 0) &&
+                        (yearItems.get(monthlyReport.getMonth()).getIncome() == 0)) {
+                    System.out.println("For month " + yearItems.get(monthlyReport.getMonth()).getMonth()
+                            + " income and expense are zero. Information for this month may be missing"
+                            + " and monthly report most likely is missing too");
+                }
             }
+            System.out.println();
         }
     }
 }

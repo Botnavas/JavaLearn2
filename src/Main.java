@@ -12,8 +12,7 @@ public class Main {
 
             switch (command) {
                 case "1" :
-                    reportsController.readMonthlyReports("resources\\m.20210",
-                            3, ".csv");
+                    reportsController.readMonthlyReports("resources\\m.2021", ".csv");
                     break;
 
                 case "2":
