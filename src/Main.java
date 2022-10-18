@@ -13,25 +13,26 @@ public class Main {
             switch (command) {
                 case "1" :
                     reportsController.readMonthlyReports("resources\\m.2021", ".csv");
+                    help();
                     break;
 
                 case "2":
-                    reportsController.readYearlyReport("resources\\y.2021.csv");
+                    reportsController.readYearlyReport("resources\\y.2021.csv", 2021);
+                    help();
                     break;
 
                 case "4":
                     reportsController.printMonthlyReports();
+                    help();
                     break;
 
                 case "5":
                     reportsController.printYearlyReport();
+                    help();
                     break;
 
                 case "3":
                     reportsController.checkReports();
-                    break;
-
-                case "help":
                     help();
                     break;
 
@@ -49,12 +50,12 @@ public class Main {
     }
 
      private static void help() {
+        System.out.println();
         System.out.println("For reading monthly reports enter: 1");
         System.out.println("For reading yearly report enter: 2");
         System.out.println("For checking reports enter: 3");
         System.out.println("For watching monthly reports enter: 4");
         System.out.println("For watching yearly report enter: 5");
         System.out.println("For exit enter: exit");
-        System.out.println("For help enter: help");
     }
 }

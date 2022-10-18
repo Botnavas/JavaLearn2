@@ -5,12 +5,6 @@ import java.nio.file.Path;
 public class FileParser {
     private static String readFile(String path)
     {
-        if (!Files.exists(Path.of(path)))
-        {
-            System.out.println("Report for month " + getMonthName(path) + " doesn't exist");
-            return null;
-        }
-
         try {
             return Files.readString(Path.of(path));
         } catch (IOException e) {
@@ -20,17 +14,13 @@ public class FileParser {
     }
 
     public static String[] getLinesFromFile(String path) {
-        if (readFile(path) == null) {
-            return null;
+        if (!isExist(path)) {
+            return new String[0];
         }
         return readFile(path).split("\n");
     }
 
-    public static String getMonthName(String path) {
-        return path.substring(path.length() - 6, path.length() - 4);
-    }
-
-    public static String getYearName(String path) {
-        return path.substring(path.length() - 8, path.length() - 4);
+    private static boolean isExist(String path) {
+        return Files.exists(Path.of(path));
     }
 }

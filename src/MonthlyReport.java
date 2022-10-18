@@ -2,28 +2,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MonthlyReport {
-    private List<MonthItem> monthItems = null;
-    private String month;
+    private List<MonthItem> monthItems = new ArrayList<>();
+    private int month;
 
-    public MonthlyReport(String[] monthItemsInLines, String month) {
+    public MonthlyReport(String[] monthItemsInLines, int month) {
         this.month = month;
-        if (monthItemsInLines == null)
+        if (monthItemsInLines.length == 0)
         {
-            monthItems = null;
-            System.out.println("Report for month " + month + " wasn't found");
+            System.out.println("Report for month " + String.format("%1$02d", month) + " wasn't found");
             return;
         }
 
-        monthItems = new ArrayList<>();
         for (int i = 1; i < monthItemsInLines.length; i ++) {
             MonthItem monthItem = new MonthItem(monthItemsInLines[i]);
             monthItems.add(monthItem);
         }
-        System.out.println("Read report for month " + month);
+        System.out.println("Read report for month " + String.format("%1$02d", month));
     }
 
     public YearItem calculateYearItem() {
-        if (monthItems == null) {
+        if (monthItems.isEmpty()) {
             return new YearItem(month);
         }
 
@@ -31,7 +29,7 @@ public class MonthlyReport {
         int monthIncome = 0;
 
         for (MonthItem monthItem : monthItems) {
-            if (monthItem.getIsExpense()) {
+            if (monthItem.isExpense()) {
                 monthExpense += monthItem.getPrice() * monthItem.getQuantity();
             } else {
                 monthIncome += monthItem.getPrice() * monthItem.getQuantity();
@@ -40,61 +38,63 @@ public class MonthlyReport {
         return new YearItem(month, monthExpense, monthIncome);
     }
 
-    private MonthItem findBiggestExpense() {
-        MonthItem biggestExpense = new MonthItem("", true, 0, 0);
+    //True for expense, false for income
+    private ArrayList<MonthItem> findBiggestExpensesOrIncomes(boolean expenseOrIncome) {
+        MonthItem biggestExpense = new MonthItem("", expenseOrIncome, 0, 0);
+        ArrayList<MonthItem> biggestExpenses = new ArrayList<>();
 
         for (MonthItem monthItem : monthItems) {
-            if (monthItem.getIsExpense()) {
+            if (monthItem.isExpense() == expenseOrIncome) {
+                if ((monthItem.getPrice() * monthItem.getQuantity()) ==
+                        (biggestExpense.getPrice() * biggestExpense.getQuantity())) {
+                    biggestExpense = monthItem;
+                    biggestExpenses.add(biggestExpense);
+                }
                 if ((monthItem.getPrice() * monthItem.getQuantity()) >
                         (biggestExpense.getPrice() * biggestExpense.getQuantity())) {
                     biggestExpense = monthItem;
+                    biggestExpenses.clear();
+                    biggestExpenses.add(biggestExpense);
                 }
             }
         }
 
-        return biggestExpense;
-    }
-
-    private MonthItem findBiggestIncome() {
-        MonthItem biggestIncome = new MonthItem("", false, 0, 0);
-
-        for (MonthItem monthItem : monthItems) {
-            if (!monthItem.getIsExpense()) {
-                if ((monthItem.getPrice() * monthItem.getQuantity()) >
-                        (biggestIncome.getPrice() * biggestIncome.getQuantity())) {
-                    biggestIncome = monthItem;
-                }
-            }
-        }
-        return biggestIncome;
+        return biggestExpenses;
     }
 
     public void printReport() {
-        if (monthItems == null) {
-            System.out.println("There isn't report for month " + month + " or it wasn't read");
+        if (monthItems.isEmpty()) {
+            System.out.println("There isn't report for month "
+                    + String.format("%1$02d", month) + " or it wasn't read");
             return;
         }
 
-        MonthItem biggestExpense = findBiggestExpense();
-        MonthItem biggestIncome = findBiggestIncome();
+        System.out.println("MONTH: " + String.format("%1$02d", month));
+        System.out.println("Biggest expenses:");
 
-        System.out.println("MONTH: " + month);
-        System.out.println("Biggest expense: " + biggestExpense.getItemName()
-            + ", Sum: " + biggestExpense.getQuantity() * biggestExpense.getPrice());
-        System.out.println("Biggest income: " + biggestIncome.getItemName()
-                + ", Sum: " + biggestIncome.getQuantity() * biggestIncome.getPrice());
+        for (MonthItem monthItem : findBiggestExpensesOrIncomes(true))
+        {
+            System.out.println(monthItem.getItemName() + ", Sum "
+                    + monthItem.getQuantity() * monthItem.getPrice());
+        }
+        System.out.println("Biggest income: ");
+        for (MonthItem monthItem : findBiggestExpensesOrIncomes(false))
+        {
+            System.out.println(monthItem.getItemName() + ", Sum "
+                    + monthItem.getQuantity() * monthItem.getPrice());
+        }
 
         System.out.println("ITEM NAME\t\tIS EXPENSE\tQUANTITY\tSUM OF ONE");
         for (MonthItem monthItem : monthItems) {
             System.out.print(monthItem.getItemName() + "\t");
-            System.out.print(monthItem.getIsExpense() + "\t");
+            System.out.print(monthItem.isExpense() + "\t");
             System.out.print(monthItem.getQuantity() + "\t");
             System.out.print(monthItem.getPrice() + "\n");
         }
         System.out.println();
     }
 
-    public  String getMonth() {
+    public int getMonth() {
         return  month;
     }
 }

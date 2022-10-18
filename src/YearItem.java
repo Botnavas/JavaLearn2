@@ -1,22 +1,22 @@
 public class YearItem {
-    private String month;
+    private int month;
     private int expense;
     private int income;
 
 
-    public YearItem(String month, int expense, int income) {
+    public YearItem(int month, int expense, int income) {
         this.month = month;
         this.income = income;
         this.expense = expense;
     }
 
-    public YearItem(String month) {
+    public YearItem(int month) {
         this.month = month;
         expense = 0;
         income = 0;
     }
 
-    public String getMonth() {
+    public int getMonth() {
         return month;
     }
 

@@ -1,7 +1,7 @@
 import java.util.HashMap;
 
 public class ReportsController {
-    private HashMap<String, MonthlyReport> monthlyReports = new HashMap<>();
+    private HashMap<Integer, MonthlyReport> monthlyReports = new HashMap<>();
     private YearlyReport yearlyReport;
 
     public  void printMonthlyReports() {
@@ -34,22 +34,15 @@ public class ReportsController {
     }
 
     public void readMonthlyReports(String firstPartOfPath, String lastPartOfPath) {
-        for (int i = 1; i <= 12; i++) {
-
-            String monthName;
-            if ( i < 10) {
-                monthName = "0" + i;
-            } else {
-                monthName = Integer.toString(i);
-            }
-            String path = firstPartOfPath + monthName + lastPartOfPath;
-            monthlyReports.put(monthName,
-                    new MonthlyReport(FileParser.getLinesFromFile(path), monthName));
+        for (int monthNumber = 1; monthNumber <= 12; monthNumber++) {
+            String path = firstPartOfPath + String.format("%1$02d", monthNumber) + lastPartOfPath;
+            monthlyReports.put(monthNumber,
+                    new MonthlyReport(FileParser.getLinesFromFile(path), monthNumber));
         }
     }
 
-    public void readYearlyReport(String path) {
-        yearlyReport = new YearlyReport(FileParser.getLinesFromFile(path), FileParser.getYearName(path));
-        System.out.println("Read yearly report for year " + FileParser.getYearName(path));
+    public void readYearlyReport(String path, int year) {
+        yearlyReport = new YearlyReport(FileParser.getLinesFromFile(path), year);
+        System.out.println("Read yearly report for year " + year);
     }
 }

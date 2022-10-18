@@ -1,21 +1,21 @@
 import java.util.HashMap;
 
 public class YearlyReport {
-    private HashMap<String, YearItem> yearItems = new HashMap<>();
-    private String year;
+    private HashMap<Integer, YearItem> yearItems = new HashMap<>();
+    private Integer year;
 
-    public YearlyReport(String[] yearItem, String year) {
+    public YearlyReport(String[] yearItem, int year) {
         this.year = year;
+
+        if (yearItem.length == 0)
+        {
+            System.out.println("Report for year" + year + " wasn't found or incorrect");
+            return;
+        }
 
         //Creating YearItem for all months
         for (int i = 1; i <= 12; i++) {
-            String monthName;
-            if (i < 10) {
-                monthName = "0" + Integer.toString(i);
-            } else  {
-                monthName = Integer.toString(i);
-            }
-            yearItems.put(monthName, new YearItem(monthName));
+            yearItems.put(i, new YearItem(i));
         }
 
         //Filling yearItems
@@ -23,10 +23,10 @@ public class YearlyReport {
             String[] yearItemData = yearItem[i].split(",");
 
             if (Boolean.parseBoolean(yearItemData[2])) {
-                yearItems.get(yearItemData[0]).addExpense(
+                yearItems.get(Integer.parseInt(yearItemData[0])).addExpense(
                         Integer.parseInt(yearItemData[1]));
             } else {
-                yearItems.get(yearItemData[0]).addIncome(
+                yearItems.get(Integer.parseInt(yearItemData[0])).addIncome(
                         Integer.parseInt(yearItemData[1]));
             }
         }
@@ -60,18 +60,18 @@ public class YearlyReport {
         System.out.println("Average expense: " + findAverageExpense());
         for (YearItem yearItem : yearItems.values()) {
             if ((yearItem.getExpense() == 0) && (yearItem.getIncome() == 0)) {
-                System.out.println("For month " + yearItem.getMonth()
+                System.out.println("For month " + String.format("%1$02d", yearItem.getMonth())
                      + " income and expense are zero. Information for this month may be missing");
             } else {
                 System.out.println("MONTH\tINCOME");
-                System.out.print(yearItem.getMonth() + "\t");
+                System.out.print(String.format("%1$02d", yearItem.getMonth()) + "\t");
                 System.out.print(Integer.toString(yearItem.getIncome() - yearItem.getExpense()) + "\n");
             }
             System.out.println();
         }
     }
 
-    public void checkMonthlyReports(HashMap<String, MonthlyReport> monthlyReports) {
+    public void checkMonthlyReports(HashMap<Integer, MonthlyReport> monthlyReports) {
         if (monthlyReports.isEmpty() || yearItems.isEmpty()) {
             System.out.println("Error: reports wasn't read");
             return;
@@ -81,13 +81,13 @@ public class YearlyReport {
             if (!monthlyReport.calculateYearItem().equals(
                     yearItems.get(monthlyReport.getMonth()))) {
                 System.out.println("Found variance in monthly report for month "
-                     + monthlyReport.getMonth() + " and yearly report");
+                     + String.format("%1$02d", monthlyReport.getMonth()) + " and yearly report");
             } else {
                 System.out.println("Data in monthly report for month "
-                        + monthlyReport.getMonth() + " and yearly report are the same");
+                        +String.format("%1$02d", monthlyReport.getMonth()) + " and yearly report are the same");
                 if ((yearItems.get(monthlyReport.getMonth()).getExpense() == 0) &&
                         (yearItems.get(monthlyReport.getMonth()).getIncome() == 0)) {
-                    System.out.println("For month " + yearItems.get(monthlyReport.getMonth()).getMonth()
+                    System.out.println("For month " + String.format("%1$02d", monthlyReport.getMonth())
                             + " income and expense are zero. Information for this month may be missing"
                             + " and monthly report most likely is missing too");
                 }

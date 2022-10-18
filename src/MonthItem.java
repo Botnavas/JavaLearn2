@@ -23,7 +23,7 @@ public class MonthItem {
         return itemName;
     }
 
-    public boolean getIsExpense() {
+    public boolean isExpense() {
         return isExpense;
     }
 
